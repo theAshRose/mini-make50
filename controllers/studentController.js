@@ -1,8 +1,15 @@
 const { Student, Course } = require('../models');
+const  ObjectID = require('mongodb').ObjectId;
 
 // TODO: Create an aggregate function to get the number of students overall
 const headCount = async () =>
-  Student.aggregate()
+  Student.aggregate(
+    [
+      {
+        $count: "head count"
+      }
+    ]
+  )
     // Your code here
     .then((numberOfStudents) => numberOfStudents);
 
@@ -13,8 +20,8 @@ const grade = async (studentId) =>
       $unwind: '$assignments',
     },
     {
-      // Your code here
-    },
+      $match: {_id: ObjectID(studentId)},},
+     { $group: { _id: "$_id", grade: {$avg: '$assignments.score' }}}
   ]);
 
 module.exports = {
